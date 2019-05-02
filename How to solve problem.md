@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Solving problem is of the most importan skills you can learn and imporving as a person solver is a lifelong challenge.
+Solving problem is of the most important skills you can learn and imporving as a person solver is a lifelong challenge.
 
 
 
