@@ -14,14 +14,18 @@ The goal by looking to particular problems is not just solve thar particular pro
 
 ## Days Between Dates
 
-#### The first thing to solve a problem is making sure we understand the problem.
+### The Problem introduction
+
+This lesson will focus on one problem: calculating the number of days between two dates.
+
+### The first thing to solve a problem is making sure we understand the problem.
 
 We are talking about computional problem, they have in common is that they have inputs and desired outputs.This is usually an infinite set for most problems and the relationships between those inputs and outputs.
 
 So, that mean a solution to a problem is a procedure that can take any inputs in that set and produces outputs, and that output is satisfies the relationship.
 
->Rules:
->
+### The Rules
+
 >0.Don't panic.
 >
 >1.what are the inputs.
@@ -29,26 +33,28 @@ So, that mean a solution to a problem is a procedure that can take any inputs in
 >2.what are the output
 >
 >3.solve the problem
+>
+>4.simple machanical solution
 
-``````python
-'''
-Days Between Dates
-This lesson will focus on one problem: calculating the number of days between two dates.
-s
-This workspace is yours to use in whatever way is helpful. You might want to keep it open in a second tab as you go through the videos.
+### The inputs
 
-inputs: 1. two dates
-						the second date not be before the first date(check)
-        2. how are inputs represented?
-        
-outputs:1. return a number giving the number of days between the first date and the second day.
+1. two dates
+2. the second date is not before the first
+3. how are inputs represented ?
 
-do next:
-	 1.we'll do some example to understand the relationship
-	 2.Trying through a few case in a very systematic way in human.And trying a difficult case that covers many of things we would need to think about in an algorithm.
-   
-   
-   2.1 2013.1.24 - 2013.6.29
+### The outputs
+
+1. return a number, giving the number of days between the first date and the second day.
+
+### Do next
+
+1. we'll do some excemple to understand the relationship.
+2. Trying through a few case in a very systematic way in human.
+3. Trying a difficult case that covers many of things we would need to think about in an algorithm.
+
+``````
+# In this case using human way to solve this problem, 
+  2013.1.24 - 2013.6.29
      1.24 - 1.31 = 7
     + Feb = 28
     + Mar = 31
@@ -56,8 +62,9 @@ do next:
   	+ May = 31
   	+ Jun 1-29 = 29
     = 156
-   2.2 
-     days = the number of days in current month minus the day we're starting on
+
+# Concluding a algorithm
+days = the number of days in current month minus the day we're starting on
      month1 += 1
      while month1 < target month:
          days += # of days in month1
@@ -65,12 +72,70 @@ do next:
      days += day2 # The month we arrived at
      while year1 < year2:
      			days += days in year1
-   2.3 should we implement this algorithm?
-			No.we should try to find simple way.Because this algorithm it doesn't handle lots of cases.
-      1)initail days are in the same month.
-      2)month2 is before month1
-      3)days in leap years
-   
+``````
+
+###Should we implement this algorithm? 
+
+No, we should try to find simple way.Because this algorithm it doesn't handle lots of cases.
+
+1. initail days are in the same month.
+2. month2 is before month1
+3. days in leap years
+
+### 'Brain-dead' solution
+
+``````
+days = 0
+while day1 is before day2:
+	date1 = day after date1
+	days += 1
+return days
+``````
+
+### Write first
+
+Defining nextDay funtion to get the next for simple case.
+
+&nbsp;
+
+Key point: Writing small bits of code test them and to know what they do.
+
+``````python
+###
+### Define a simple nextDay procedure, that assumes
+### every month has 30 days.
+###
+### For example:
+###    nextDay(1999, 12, 30) => (2000, 1, 1)
+###    nextDay(2013, 1, 30) => (2013, 2, 1)
+###    nextDay(2012, 12, 30) => (2013, 1, 1)  (even though December really has 31 days)
+###
+
+def nextDay(year, month, day):
+    """
+    Returns the year, month, day of the next day.
+    Simple version: assume every month has 30 days.
+
+    """
+    if day == 30 :
+        day = 1
+        if month >= 12 :
+            month = 1 
+            year += 1
+        else :
+            month +=1
+    else:
+        day +=1
+    date = (year, month, day)
+    
+    return date
+``````
+
+### My current solution before study this lesson
+
+``````python
+'''
+Before study this lesson, I solve this problem by this way.
 '''
 day_list = [31, 28, 31, 30, 31, 30, 31, 30, 31, 30, 31, 30]
 
