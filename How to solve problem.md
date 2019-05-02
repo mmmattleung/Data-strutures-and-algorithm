@@ -74,7 +74,7 @@ days = the number of days in current month minus the day we're starting on
      			days += days in year1
 ``````
 
-###Should we implement this algorithm? 
+### Should we implement this algorithm? 
 
 No, we should try to find simple way.Because this algorithm it doesn't handle lots of cases.
 
