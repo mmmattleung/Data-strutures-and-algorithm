@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Solving problem is of the most important skills you can learn and imporving as a person solver is a lifelong challenge.
+Solving problem is one of the most important skills you can learn and imporving as a person solver is a lifelong challenge.
 
 
 
@@ -10,7 +10,7 @@ We will study how to approach more complicated problems in particular problems.
 
 
 
-The goal by looking to particular problems is not just solve thar particular problems, but to draw some general lesson about how we can get better to solve problem in general.
+The goal by looking to particular problems is not just solve that particular problems, but draw some general lesson about how we can get better to solve problem in general.
 
 ## Days Between Dates
 
@@ -32,7 +32,7 @@ So, that mean a solution to a problem is a procedure that can take any inputs in
 >
 >2.what are the output
 >
->3.solve the problem
+>3.understand the relationship between inputs and outputs.
 >
 >4.simple machanical solution
 
@@ -112,24 +112,341 @@ Key point: Writing small bits of code test them and to know what they do.
 ###
 
 def nextDay(year, month, day):
-    """
-    Returns the year, month, day of the next day.
-    Simple version: assume every month has 30 days.
-
-    """
-    if day == 30 :
-        day = 1
-        if month >= 12 :
-            month = 1 
-            year += 1
-        else :
-            month +=1
+    """Simple version: assume every month has 30 days"""
+    if day < 30:
+        return year, month, day + 1
     else:
-        day +=1
-    date = (year, month, day)
-    
-    return date
+        if month == 12:
+            return year + 1, 1, 1
+        else:
+            return year, month + 1, 1
 ``````
+
+### Do next
+
+Writing a procedure daysBetweenDates for giving approximate answers with our nextDay procedure.
+
+``````python
+def nextDay(year, month, day):
+    """Simple version: assume every month has 30 days"""
+    if day < 30:
+        return year, month, day + 1
+    else:
+        if month == 12:
+            return year + 1, 1, 1
+        else:
+            return year, month + 1, 1
+        
+def daysBetweenDates(year1, month1, day1, year2, month2, day2):
+    """Returns the number of days between year1/month1/day1
+       and year2/month2/day2. Assumes inputs are valid dates
+       in Gregorian calendar, and the first date is not after
+       the second."""
+    a = (year2, month2, day2)
+    days = 1
+    while nextDay(year1, month1, day1) < a:
+        days += 1
+        year1, month1, day1 = nextDay(year1, month1, day1)
+    return days
+    
+def test():
+    test_cases = [((2012,9,30,2012,10,30),30), 
+                  ((2012,1,1,2013,1,1),360),
+                  ((2012,9,1,2012,9,4),3)]
+    for (args, answer) in test_cases:
+        result = daysBetweenDates(*args)
+        if result != answer:
+            print "Test with data:", args, "failed"
+        else:
+            print "Test case passed!"
+test()
+``````
+
+### Solution in Three Parts
+
+1) **Step One Pseudocode** 
+
+``````python
+days = 0
+while day1 is before day2:
+	date1 = day after date1
+	days += 1
+return days
+``````
+
+2) **Step Two Helper Function**
+
+``````python
+def datesIsBefore(year1, month1, day1, year2, month2, day2):
+  	if year1 < year2:
+      return True
+    else:
+      if month1 < month2:
+        return True
+      if month1 == month2:
+        return day1 < day2
+   	return False
+``````
+
+3) **Step Three daysBetweenDates**
+
+``````python
+def daysBetweenDates(year1, month1, day1, year2, month2, day2):
+    """
+    Calculates the number of days between two dates.
+    """
+    resultDays = 0
+    while isBeforeDate(year1, month1, day1, year2, month2, day2):
+        resultDays += 1
+        year1, month1, day1 = nextDay(year1, month1, day1)
+    return resultDays
+``````
+
+### Add assertion
+
+We should raise a exception when input a invalid date
+
+``````python
+def datesIsBefore(year1, month1, day1, year2, month2, day2):
+    assert not dateIsBefore(year2, month2, day2, year1, month1, day1)
+  	if year1 < year2:
+      return True
+    else:
+      if month1 < month2:
+        return True
+      if month1 == month2:
+        return day1 < day2
+   	return False
+``````
+
+### Real World Problem
+
+One of the good ways about solving the problem.This way is getting close to an answer without dealing with all that complexity.But we’ve gotta deal with it at some point.Now we're gotta deal with how many days there actually are in a month.
+
+
+
+The most efective way to finish the problem:
+
+1. Write stub daysInMonth that always return 30.
+2. Modify nextDays to use daysInMonth.
+3. Test nextDays using stub daysInMonth.
+4. Modify daysInMonth to be correct except for leap years.
+5. Test daysInMonth using stub daysInMonth.
+6. Write isLeapYear
+7. Test isLeapYear
+8. test daysBetweenDates for all test cases.
+
+
+
+``````python
+# Step 1:
+def daysInMonth(year, month):
+    return 30
+#############################################################
+
+def datesIsBefore(year1, month1, day1, year2, month2, day2):
+    if year1 < year2:
+        return True
+    else:
+        if month1 < month2:
+            return True
+        if month1 == month2:
+            return day1 < day2
+    return False
+
+
+
+def nextDay(year, month, day):
+    """Simple version: assume every month has 30 days"""
+    if day < daysInMonth(year, month): # Step 2
+        return year, month, day + 1
+    else:
+        if month == 12:
+            return year + 1, 1, 1
+        else:
+            return year, month + 1, 1
+
+
+def daysBetweenDates(year1, month1, day1, year2, month2, day2):
+    """Returns the number of days between year1/month1/day1
+       and year2/month2/day2. Assumes inputs are valid dates
+       in Gregorian calendar, and the first date is not after
+       the second."""
+    assert not datesIsBefore(year2, month2, day2, year1, month1, day1)
+    days = 0
+    while datesIsBefore(year1, month1, day1, year2, month2, day2):
+        year1, month1, day1 = nextDay(year1, month1, day1)
+        days += 1
+    return days
+
+# Step 3:
+def t():
+    assert daysBetweenDates(2013, 1, 1, 2013, 1, 1) == 0
+    assert daysBetweenDates(2013, 1, 1, 2013, 1, 2) == 1
+    assert daysBetweenDates(2013, 1, 1, 2014, 1, 1) == 360
+    assert nextDay(2013, 1, 1) == (2013, 1, 2)
+    # assert nextDay(2013, 4, 1) == (2013, 2, 2)
+    assert nextDay(2012, 12, 30) == (2013, 1, 1)
+    print("Test Finished!")
+#############################################################
+t()
+``````
+
+
+
+``````python
+# Step 4:
+
+day_list = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+
+def daysInMonth(year, month):
+    if day < day_list[month - 1]:
+        return year, month, day + 1
+    else:
+        if month == 12:
+            return year + 1, 1, 1
+        else:
+            return year, month + 1, 1
+#############################################################
+
+def datesIsBefore(year1, month1, day1, year2, month2, day2):
+    if year1 < year2:
+        return True
+    else:
+        if month1 < month2:
+            return True
+        if month1 == month2:
+            return day1 < day2
+    return False
+
+
+
+def nextDay(year, month, day):
+    """Simple version: assume every month has 30 days"""
+    if day < daysInMonth(year, month):
+        return year, month, day + 1
+    else:
+        if month == 12:
+            return year + 1, 1, 1
+        else:
+            return year, month + 1, 1
+
+
+def daysBetweenDates(year1, month1, day1, year2, month2, day2):
+    """Returns the number of days between year1/month1/day1
+       and year2/month2/day2. Assumes inputs are valid dates
+       in Gregorian calendar, and the first date is not after
+       the second."""
+    assert not datesIsBefore(year2, month2, day2, year1, month1, day1)
+    days = 0
+    while datesIsBefore(year1, month1, day1, year2, month2, day2):
+        year1, month1, day1 = nextDay(year1, month1, day1)
+        days += 1
+    return days
+
+# Step 5:
+def t():
+    assert daysBetweenDates(2013, 1, 1, 2014, 1, 1) == 365
+    assert nextDay(2012, 12, 31) == (2013, 1, 1)
+    print("Test Finished!")
+#############################################################
+t()
+``````
+
+
+
+``````python
+# Step 6:
+def isLeapYear(year):
+    if year % 400 == 0:
+        return True
+    if year % 100 == 0:
+        return False
+    if year % 4 == 0:
+        return True
+    return False
+
+# Step 7:
+def t():
+    assert isLeapYear(2013) == False
+    assert isLeapYear(2012) == True
+``````
+
+
+
+``````python
+# All
+def isLeapYear(year):
+    if year % 400 == 0:
+        return True
+    if year % 100 == 0:
+        return False
+    if year % 4 == 0:
+        return True
+    return False
+
+
+def datesIsBefore(year1, month1, day1, year2, month2, day2):
+    if year1 < year2:
+        return True
+    else:
+        if month1 < month2:
+            return True
+        if month1 == month2:
+            return day1 < day2
+    return False
+
+dayList = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+
+def daysInMonth(year, month):
+    if isLeapYear(year) and month == 2:
+        return 29
+    return dayList[month-1]
+
+def nextDay(year, month, day):
+    """Simple version: assume every month has 30 days"""
+    if day < daysInMonth(year, month):
+        return year, month, day + 1
+    else:
+        if month == 12:
+            return year + 1, 1, 1
+        else:
+            return year, month + 1, 1
+
+
+def daysBetweenDates(year1, month1, day1, year2, month2, day2):
+    """Returns the number of days between year1/month1/day1
+       and year2/month2/day2. Assumes inputs are valid dates
+       in Gregorian calendar, and the first date is not after
+       the second."""
+    assert not datesIsBefore(year2, month2, day2, year1, month1, day1)
+    days = 0
+    while datesIsBefore(year1, month1, day1, year2, month2, day2):
+        year1, month1, day1 = nextDay(year1, month1, day1)
+        days += 1
+    return days
+
+
+def test():
+    assert daysBetweenDates(2013, 1, 1, 2013, 1, 1) == 0
+    assert daysBetweenDates(2013, 1, 1, 2013, 1, 2) == 1
+    assert daysBetweenDates(2013, 1, 1, 2014, 1, 1) == 365
+    assert nextDay(2013, 1, 1) == (2013, 1, 2)
+    # assert nextDay(2013, 4, 1) == (2013, 2, 2)
+    assert nextDay(2012, 12, 31) == (2013, 1, 1)
+    assert nextDay(2012, 8, 30) == (2012, 8, 31)
+    assert daysBetweenDates(2012, 1, 1, 2013, 1, 1) == 366
+    assert daysBetweenDates(2012, 2, 13, 2012, 3, 1) == 17
+    assert daysBetweenDates(2012, 2, 13, 2012, 3, 1) == 16
+    print("Test Finished!")
+
+test()
+s
+``````
+
+
+
+
 
 ### My current solution before study this lesson
 
