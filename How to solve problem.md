@@ -412,7 +412,7 @@ def nextDay(year, month, day):
             return year + 1, 1, 1
         else:
             return year, month + 1, 1
-
+s
 
 def daysBetweenDates(year1, month1, day1, year2, month2, day2):
     """Returns the number of days between year1/month1/day1
